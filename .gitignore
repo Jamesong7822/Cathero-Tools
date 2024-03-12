@@ -122,3 +122,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Ignore Data And Debug Logs
+*.csv
+*.log
+*.png
