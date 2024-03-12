@@ -125,5 +125,5 @@ dmypy.json
 
 # Ignore Data And Debug Logs
 *.csv
-*.log
-*.png
+*.logit
+Data
