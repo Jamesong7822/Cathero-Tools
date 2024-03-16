@@ -1,3 +1,5 @@
 opencv-python
 loguru
 pywin32
+pandas
+matplotlib
