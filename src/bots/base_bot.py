@@ -3,19 +3,22 @@ from src.common.window_capture import *
 from src.common.template_matcher import *
 from abc import abstractmethod
 from src.common.data_logger import *
+from src.common.adb_manager import AdbManager
         
 class BaseBot:
     NAME = "BASE BOT"
     FOLDER_PATH_FOR_SCREENSHOTS = os.path.join(ROOT_PATH, "Data", NAME, "Screenshots")
     DEFAULT_DATA_FOLDER = os.path.join(ROOT_PATH, "Data", NAME)
     DATA_HEADERS = []
-    def __init__(self, windowCapture:WindowCapture, templateTypes:list[Template_Types], folder:str=DEFAULT_DATA_FOLDER, headers:list[str]=DATA_HEADERS):
+    def __init__(self, windowCapture:WindowCapture, adbManager:AdbManager,
+                 templateTypes:list[Template_Types], folder:str=DEFAULT_DATA_FOLDER, headers:list[str]=DATA_HEADERS):
         self.templateStore = TemplateStore()
         self.dataLogger = DataLogger(folder=folder, headers=headers)
         self._hasTakenScreenshot = False
         self._isRunning = True
         self._templateTypes = templateTypes
         self.windowCapture = windowCapture
+        self.adbManager = adbManager
         self._run()
 
     def _run(self):

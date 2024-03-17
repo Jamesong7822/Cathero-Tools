@@ -3,3 +3,5 @@ loguru
 pywin32
 pandas
 matplotlib
+adbutils
+setuptools
