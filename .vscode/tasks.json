@@ -17,7 +17,7 @@
         {
             "label": "2) Install Dependencies",
             "type": "shell",
-            "command": "venv\\scripts\\activate && pip install -e .",
+            "command": "venv\\scripts\\activate && pip install -e . && pip install tesserocr-2.6.2-cp311-cp311-win_amd64.whl",
             "problemMatcher": []
         }
     ]
