@@ -33,6 +33,8 @@ class BaseBot:
             key = cv2.waitKey(50)
             if key == ord("q"):
                 self._isRunning = False
+            elif key == ord("s"):
+                self._takeScreenshot(screenshot=screenshot)
 
         cv2.destroyAllWindows()
 
@@ -66,5 +68,5 @@ class BaseBot:
 if __name__ == "__main__":
     windowCapture = WindowCapture(windowName="Cathero")
     windowCapture.start()
-    a = BaseBot(windowCapture=windowCapture, templateTypes=[Template_Types.REWARD_FROM_AD_CART])
+    a = BaseBot(windowCapture=windowCapture, adbManager=AdbManager(), templateTypes=[])
     windowCapture.stop()

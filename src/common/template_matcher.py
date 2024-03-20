@@ -10,6 +10,28 @@ class Template_Types(Enum):
     RUNE_TICKET = auto()
     DIAMONDS = auto()
 
+    MARKET_HEADER = auto()
+    HAT_COMMON = auto()
+    HAT_UNCOMMON = auto()
+    HAT_RARE = auto()
+    HAT_EPIC = auto()
+    HAT_LEGENDARY = auto()
+    GLOVES_COMMON = auto()
+    GLOVES_UNCOMMON = auto()
+    GLOVES_RARE = auto()
+    GLOVES_EPIC = auto()
+    GLOVES_LEGENDARY = auto()
+    SCARF_COMMON = auto()
+    SCARF_UNCOMMON = auto()
+    SCARF_RARE = auto()
+    SCARF_EPIC = auto()
+    SCARF_LEGENDARY = auto()
+    SHOE_COMMON = auto()
+    SHOE_UNCOMMON = auto()
+    SHOE_RARE = auto()
+    SHOE_EPIC = auto()
+    SHOE_LEGENDARY = auto()
+
 class TemplateStore:
     DATA = {
         Template_Types.REWARD_FROM_AD_CART: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Ad Cart.png"),
@@ -19,7 +41,27 @@ class TemplateStore:
         Template_Types.COMPANION_TICKET: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Companion Ticket 2.png"),
         Template_Types.RUNE_TICKET: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Rune Ticket.png"),
         Template_Types.DIAMONDS: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Diamond 2.png"),
-        
+        Template_Types.MARKET_HEADER: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Market_Header2.png"),
+        Template_Types.HAT_COMMON: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "hat_common.png"),
+        Template_Types.HAT_UNCOMMON: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "hat_uncommon.png"),
+        Template_Types.HAT_RARE: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "hat_rare.png"),
+        Template_Types.HAT_EPIC: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "hat_epic.png"),
+        Template_Types.HAT_LEGENDARY: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "hat_legendary.png"),
+        Template_Types.GLOVES_COMMON: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "glove_common.png"),
+        Template_Types.GLOVES_UNCOMMON: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "glove_uncommon.png"),
+        Template_Types.GLOVES_RARE: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "glove_rare.png"),
+        Template_Types.GLOVES_EPIC: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "glove_epic.png"),
+        Template_Types.GLOVES_LEGENDARY: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "glove_legendary.png"),
+        Template_Types.SCARF_COMMON: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "scarf_common.png"),
+        Template_Types.SCARF_UNCOMMON: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "scarf_uncommon.png"),
+        Template_Types.SCARF_RARE: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "scarf_rare.png"),
+        Template_Types.SCARF_EPIC: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "scarf_epic.png"),
+        Template_Types.SCARF_LEGENDARY: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "scarf_legendary.png"),
+        Template_Types.SHOE_COMMON: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "shoe_common.png"),
+        Template_Types.SHOE_UNCOMMON: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "shoe_uncommon.png"),
+        Template_Types.SHOE_RARE: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "shoe_rare.png"),
+        Template_Types.SHOE_EPIC: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "shoe_epic.png"),
+        Template_Types.SHOE_LEGENDARY: os.path.join(ROOT_PATH, "src", "Assets", "Templates", "Gears", "shoe_legendary.png"),
     }
 
     def __init__(self):
@@ -54,19 +96,29 @@ class TemplateMatcherResult:
 class TemplateMatcher:
     # FORCE RESIZE
     DEFAULT_HEIGHT = 700 # px
+    DEFAULT_TEMPLATE_HEIGHT=30 #px
     TEMPLATE_HEIGHT_MAX = 50 #px
-    TEMPLATE_HEIGHT_MIN = 15 #px
+    TEMPLATE_HEIGHT_MIN = 10 #px
+    TEMPLATE_HEIGHT_UP = 20 #px
+    TEMPLATE_HEIGHT_DOWN = 20 #px
     TEMPLATE_HEIGHT_STEP = 1 #px
     MIN_MATCH_THRESHOLD = 0.8
 
-    def __init__(self, img, templateType:Template_Types, templateStore:TemplateStore, 
-                 threshold:float=MIN_MATCH_THRESHOLD, cropX=0.5, cropY=0.5, cropOffsetY:int=0) -> None:
+    def __init__(self, img, templateType:Template_Types, templateStore:TemplateStore, threshold:float=MIN_MATCH_THRESHOLD,
+                 defaultHeight:int=DEFAULT_HEIGHT, 
+                 templateHeight:int=DEFAULT_TEMPLATE_HEIGHT, heightUp:int=TEMPLATE_HEIGHT_UP, heightDown:int=TEMPLATE_HEIGHT_DOWN,
+                 cropX=0.5, cropY=0.5, cropOffsetX:int=0, cropOffsetY:int=0) -> None:
         self.originalImg = copy.deepcopy(img)
-        self.img = self._image_resize(img, height=self.DEFAULT_HEIGHT)
+        self.img = self._image_resize(img, height=defaultHeight)
         self.templateType = templateType
         self.threshold = threshold
+        self.defaultHeight=defaultHeight
+        self.templateHeight = templateHeight
+        self.heightUp = heightUp
+        self.heightDown = heightDown
         self.cropX = cropX
         self.cropY = cropY
+        self.cropOffsetX = cropOffsetX
         self.cropOffsetY = cropOffsetY
         ## Make some important variables for the image
         self._height, self._width = self.img.shape[0], self.img.shape[1]
@@ -76,7 +128,7 @@ class TemplateMatcher:
             # do nothing
             self.templateImg = templateStore.getTemplateImg(templateType=templateType)
         else:
-            self.templateImg = self._image_resize(templateStore.getTemplateImg(templateType=templateType), height=self.TEMPLATE_HEIGHT_MAX)
+            self.templateImg = self._image_resize(templateStore.getTemplateImg(templateType=templateType), height=self.templateHeight)
 
         self.templateMatchResult = self._matchTemplate()
         if self.templateMatchResult:
@@ -89,11 +141,11 @@ class TemplateMatcher:
     
     def _matchTemplate(self) -> TemplateMatcherResult:
         # Reduce region of inerest
-        img, offsetTL, cropH, cropW = self._cropImage(self.img, self.cropX, self.cropY, self.cropOffsetY)
-        # for i in range(self.TEMPLATE_HEIGHT_MAX, self.TEMPLATE_HEIGHT_MIN, -self.TEMPLATE_HEIGHT_STEP):
-        for i in range(10, -20, -1):
+        img, offsetTL, cropH, cropW = self._cropImage(self.img, self.cropX, self.cropY, self.cropOffsetX, self.cropOffsetY)
+        for i in range(self.heightUp, -self.heightDown, -self.TEMPLATE_HEIGHT_STEP):
+        # for i in range(10, -20, -1):
             try:
-                template = self._image_resize(self.templateImg, height=self.TEMPLATE_HEIGHT_MAX+i)
+                template = self._image_resize(self.templateImg, height=self.templateHeight+i)
                 w, h = template.shape[1], template.shape[0]
                 res = cv2.matchTemplate(img, template, cv2.TM_CCOEFF_NORMED)
                 min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
@@ -107,6 +159,8 @@ class TemplateMatcher:
         return TemplateMatcherResult(templateType=self.templateType, matchVal=0, topLeft=(0,0), width=0, height=0, offsetTL=offsetTL, cropW=cropW, cropH=cropH)
 
     def _image_resize(self, image, width = None, height = None, inter = cv2.INTER_AREA):
+        if image is None:
+            return
         # initialize the dimensions of the image to be resized and
         # grab the image size
         dim = None
@@ -137,7 +191,7 @@ class TemplateMatcher:
         # return the resized image
         return resized
     
-    def _cropImage(self, img, cropX, cropY, cropOffsetY):
+    def _cropImage(self, img, cropX, cropY, cropOffsetX, cropOffsetY):
         # ratios of crop
         img = copy.deepcopy(img)
         h, w = img.shape[:2]
@@ -145,9 +199,9 @@ class TemplateMatcher:
         ratioY_2 = 1-0.5*(1-cropY)
         ratioX_1 = 0.5*(1-cropX)
         ratioX_2 = 1-0.5*(1-cropX)
-        img = img[int(h*ratioY_1)+cropOffsetY:int(h*ratioY_2)+cropOffsetY, int(w*ratioX_1):int(w*ratioX_2)]
+        img = img[int(h*ratioY_1)+cropOffsetY:int(h*ratioY_2)+cropOffsetY, int(w*ratioX_1)+cropOffsetX:int(w*ratioX_2)+cropOffsetX]
         # get transposed positions
-        offsetTopLeft = [int(w*ratioX_1), int(h*ratioY_1)+cropOffsetY]
+        offsetTopLeft = [int(w*ratioX_1)+cropOffsetX, int(h*ratioY_1)+cropOffsetY]
         # offsetTopRight = [int(h*ratioY_2), int(w*ratioX_2)]
         # Debug
         # cv2.waitKey(0)

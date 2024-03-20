@@ -127,3 +127,5 @@ dmypy.json
 *.csv
 *.logit
 Data
+
+*.traineddata

@@ -13,13 +13,13 @@ class AdCartBot(BaseBot):
     DEFAULT_DATA_FOLDER = os.path.join(ROOT_PATH, "Data", NAME)
     FOLDER_PATH_FOR_SCREENSHOTS = os.path.join(ROOT_PATH, "Data", NAME, "Screenshots")
 
-    def __init__(self, windowCapture: WindowCapture, templateTypes: list[Template_Types], folder=DEFAULT_DATA_FOLDER, headers: list[str] = DATA_HEADERS):
+    def __init__(self, windowCapture: WindowCapture, adbManager:AdbManager, templateTypes: list[Template_Types], folder=DEFAULT_DATA_FOLDER, headers: list[str] = DATA_HEADERS):
         self.lastRewardTime = datetime.now()
         self.lastAdCartTime = datetime.now()
         self.detectedAdCartFlag = False
         self._state = AD_CART_BOT_STATES.LOOK_FOR_AD_CART
         self.startIdleTime = datetime.now()
-        super().__init__(windowCapture, templateTypes, folder, headers)
+        super().__init__(windowCapture, adbManager, templateTypes, folder, headers)
         
     def _botSpecificActions(self, screenshot):
         if self._state == AD_CART_BOT_STATES.IDLE:
@@ -69,7 +69,9 @@ class AdCartBot(BaseBot):
 if __name__ == "__main__":
     windowCapture = WindowCapture(windowName="Cathero")
     windowCapture.start()
-    a = AdCartBot(windowCapture=windowCapture, 
+    adbManager = AdbManager()
+    a = AdCartBot(windowCapture=windowCapture,
+                  adbManager=adbManager, 
                   templateTypes=[Template_Types.FISH_TANK_KIT, Template_Types.CANNON_TICKET, 
                                  Template_Types.SKILL_TICKET, Template_Types.COMPANION_TICKET, 
                                  Template_Types.RUNE_TICKET, Template_Types.DIAMONDS])
